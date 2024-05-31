@@ -2,14 +2,13 @@ name: Deploy to Amazon EC2
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: [ "solution" ]
 
 env:
   AWS_REGION: ap-northeast-2
-  S3_BUCKET_NAME: efub-week10-github-actions-s3-bucket
-  CODE_DEPLOY_APPLICATION_NAME: efub-week10-codedeploy-app
-  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: efub-week10-codedeploy-deployment-group
-
+  S3_BUCKET_NAME: efub-seminar
+  CODE_DEPLOY_APPLICATION_NAME: efub-seminar
+  CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: efub-seminar
 permissions:
   contents: read
 
