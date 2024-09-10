@@ -40,5 +40,29 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - name: Docker pull & push
+        uses : docker/build-push-action@v2
+        with :
+          context: ./blog
+          file : ./blog/Dockerfile
+          platforms: linux/amd64/v8
+          # 빌드 후 Docker 레지스트리에 푸시할지 여부 지정
+          push: true
+          # 이미지 태그 지정
+          tags: ${{ secrets.DOCKER_REPO }}:latest
 
-
+      # SSH를 사용하여 EC2에 명령을 전달
+      - name: Deploy to Server
+        uses: appleboy/ssh-action@master
+        with:
+          # 원격 서버의 호스트 주소 지정
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.KEY }}
+          envs: GITHUB_SHA
+          # 아래 명령들을 실행
+          script: |           
+            sudo docker rm -f $(sudo docker ps -qa)       
+            sudo docker pull ${{ secrets.DOCKER_REPO }}:latest
+            sudo docker run -d -p 8080:8080 ${{ secrets.DOCKER_REPO }}:latest            
+            sudo docker image prune -f
